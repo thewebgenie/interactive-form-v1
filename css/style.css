@@ -179,3 +179,7 @@ button:hover {
 		width: 49%;
 	}
 }
+button:disabled {
+	cursor: default;
+	background-color: lightgrey;
+}
