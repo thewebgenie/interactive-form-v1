@@ -6,6 +6,7 @@ The purpose is to add interactivity to a form by making changes to index.html th
 //Task 1 - on page load focus on 1st form element
 $("#name").focus();
 $('#other-title').remove();
+$('#payment').val('credit card');
 //Task 2 - when other is selected from the "Job Role" drop down menu, reveal a text field for user entry of job title
 $('#title').change(function() {
 	//variable for value of #title select box
@@ -24,10 +25,6 @@ $('#title').change(function() {
 	}
 });
 //Task 3 - Shirt Changes
-// var $pleaseselectappend = '<option value="pleaseselect">Please select a theme first.</option>';
-// $("#color").append($pleaseselectappend);
-// 		//hide all color options until theme is selected
-// $( 'option[value="tomato"], option[value="steelblue"], option[value="dimgrey"], option[value="cornflowerblue"], option[value="darkslategrey"], option[value="gold"]' ).hide();
 $('#color').hide();
 $('#color').prev().hide();
 $('#design').change(function() {
@@ -52,36 +49,28 @@ $('#color').prev().show();
 		//show i love js shirt colors
 		$('option[value="tomato"], option[value="steelblue"], option[value="dimgrey"]').show();
 	}
-
 });
-function dateTimeIsolator(textTarget) {
- 	var $text = $(textTarget).parent().text();
-	var $length = $text.length;
-	var $dateTime = $text.slice($length-25, $length-7);
-	return $dateTime;
- }
- var firstDateTime = dateTimeIsolator($('input[name="js-libs"]'));
- console.log(firstDateTime);
 // ACTIVITIES fieldset changes
 //add price of activities to value of each input in activities fieldset
 $('.activities input').each(function() {
 	$(this).val(100);
 });
 $('.activities input').first().val('200');
- 
-
 $('.activities input').click( function() {
-	var $this = $(this);
-	var $text = $(this).text();
-		var $length = $text.length;
-		var $dateTime = $text.slice($length-25, $length-7);
+	var $text = $(this).parent().text();
+	console.log($text);
+	var $length = $text.length;
+	console.log($length);
+	var $dateTime = $text.slice($length-22, $length-6);
+	console.log($dateTime);
 	var $parent = $(this).parent();
 	var isInputChecked = (this.checked);
 	
 	$($parent).siblings().each(function() {
 		var text = $(this).text();
 		var length = text.length;
-		var dateTime = text.slice(length-25, length-7);
+		var dateTime = text.slice(length-22, length-6);
+
 		if ($dateTime === dateTime && isInputChecked) {
 			$(this).children().attr('disabled', true);
 		}
@@ -108,12 +97,16 @@ $('.activities input').click( function() {
 $( "#credit-card" ).nextAll().hide();
 $('#payment').change(function() {
 	var $payMethod = $('#payment').val();
-	console.log($payMethod);
 
 	if ($payMethod === 'credit card') {
 		$( "#credit-card" ).show();
 		$( "#credit-card" ).nextAll().hide();
 
+	}
+	else if ($payMethod === 'select_method') {
+		$( "#credit-card" ).hide();
+		$( "#credit-card" ).nextAll().hide();
+		$( "#credit-card" ).next().hide();
 	}
 	else if ($payMethod === 'paypal') {
 		$( "#credit-card" ).hide();
@@ -127,18 +120,16 @@ $('#payment').change(function() {
 
 	}
 })
-
-
-
 //Validation
 //boolean variables
-var nameNotBlank;
+var nameValid;
 var emailValid;
-var oneIsChecked;
-var creditCardVerified;
+var checkValid;
+var paymentInfoValid;
 //1.)check that name field is not blank
 //on load
 //if blank
+//real time validation
 if ($('#name').val() === "") {
 	//change label and add red color
 	$('#name').prev().text("Name: Please provide your name").css("color", "red");
@@ -152,9 +143,10 @@ $('#name').on("change focus keyup click paste", function() {
 else {
 	$('#name').prev().text("Name").css("color", "black");
 	//set nameNotBlank to true
-	return nameNotBlank = true;
+	return nameValid = true;
 }
 });
+//end real time validation
 //2.)function to make sure email is formatted like [text]@[text].[text]
 function validateEmail(email) {
     var re = /\S+@\S+\.\S+/;
@@ -162,13 +154,15 @@ function validateEmail(email) {
 }
 //function that calls validateEmail function and returns true if email address passes test
 var mailVer = function() {
+
 	var $mail = $('#mail').val();
+
 	if (validateEmail($mail)) {
-		return emailValid;
-		console.log(emailValid);
+		return emailValid = true;
+		console.log(validateEmail($mail));
 	}
 	else {
-		return !emailValid;
+		return emailValid = false;
 	}
 }
 //3.)make sure at least one checkbox is checked
@@ -176,65 +170,104 @@ var checkboxVer = function() {
 	//count the number of checked check boxes
 	var count = $( ".activities input:checked" ).length;
 	if (count > 0) {
-		return oneIsChecked;
+		return checkValid = true;
 	}
 	else {
-		return !oneIsChecked;
+		return checkValid = false;
 	}
 }
 //4.) Credit Card Validations
 	//4a.)Credit card field should only accept a number between 13 and 16 digits
 	//4b.)The zipcode field should accept a 5-digit number
 	//4c.)The CVV number must be exactly 3 digits long
-function getLength(target) {
-	target.length;
+	function getLength(x) {
+	return x.toString().length;
 }
 //function to make sure test subject is made up of only numbers
 function onlyNums(testval) {
 	var on = /^\d+$/;
 	return on.test(testval);
 }
-function ccTest (varc, numNums, ccbool) {
-		if(getLength(varc) === numNums && onlyNums(varc)) {
-			return ccbool;
-		}
-		else {
-			return !ccbool;
-		}
-	}
-$('#payment').on('change', function() {
-var paymentValue = $('#payment').val();
-if (paymentValue === 'credit card') {
+	var ccNumberVerified;
+	var cvvVerified;
+	var zipVerified;
+	var ccNumberVerification = function() {
+	//count the number of checked check boxes
 	var $ccn = $("#cc-num").val();
+	if (getLength($ccn) == 16 && onlyNums($ccn)) {
+		return ccNumberVerified = true;
+	}
+	else {
+		return ccNumberVerified = false;
+	}
+}
+var cvvVerification = function() {
+	//count the number of checked check boxes
 	var $cvv = $("#cvv").val();
+	if (getLength($cvv) == 3 && onlyNums($cvv)) {
+		return cvvVerified = true;
+	}
+	else {
+		return cvvVerified = false;
+	}
+}
+var zipVerification = function() {
+	//count the number of checked check boxes
 	var $zip = $("#zip").val();
-
-	var cardNumberValid;
-	var cvvValid;
-	var zipValid;
-	
-	ccTest($ccn, 16, cardNumberValid);
-	ccTest($cvv, 3, cvvValid);
-	ccTest($zip, 5, zipValid);
-
-	if (cardNumberValid && cvvValid && zipValid || paymentValue === 'paypal' || 'bitcoin' ) {
-		creditCardVerified = true;
-		console.log('creditCardVerified now');
+	if (getLength($zip) == 5 && onlyNums($zip)) {
+		return zipVerified = true;
 	}
+	else {
+		return zipVerified = false;
+	}
+}
+function ccVerification() {
+	ccNumberVerification();
+	cvvVerification();
+	zipVerification();
+
+	if (ccNumberVerified && cvvVerified && zipVerified ) {
+		return paymentInfoValid = true;
+	}
+	else {
+		return paymentInfoValid = false;
 	}
 
- 
-// $('button [type="submit"').onclick = submit();
-// })
-$('form').on('submit', function() {
-	checkboxVer() && mailVer();
-	if (!nameNotBlank 
-		|| !emailValid
-		|| !oneIsChecked
-		|| !creditCardVerified) {
-		console.log('There are errors');
 }
 
-})
+var paymentInfoVerification = function() {
+	var choice = $('#payment').val();
+	if (choice === 'credit card') {
+		ccVerification();
+	}
+	else if (choice === 'select_method') {
+		alert("payment method must be chosen");
+		return paymentInfoValid = false;
+	}
+	else if(choice === 'paypal') {
+		return paymentInfoValid = true;
+	}
+	else if(choice === 'bitcoin') {
+		return paymentInfoValid = true;
+	}	
+}
+$('form').on('submit', function(event) {
+	event.preventDefault();
+	checkboxVer(); 
+	mailVer(); 
+	paymentInfoVerification(); 
+	// console.log(ccTest($('#cc-num'), 16));
+	if (!nameValid || !emailValid || !checkValid || !paymentInfoValid) {
+		console.log('There are errors');
+		console.log(nameValid);
+		console.log(emailValid);
+		console.log(checkValid);
+		console.log(paymentInfoValid);
+}
+else {
+	alert('Registration Complete');
+	location.reload();
+}
+	
 })
 
