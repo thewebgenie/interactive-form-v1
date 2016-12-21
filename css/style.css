@@ -15,7 +15,7 @@ button {
 body {
   font: 1em/1.5;
   color: #184f68;
-	background: #accbd9;
+	background: #47e3ff;
 }
 
 header {
@@ -26,6 +26,7 @@ h1 {
 	font-size: 2.5em;
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
 	margin: 0;
+	color: black;
 }
 
 a {
@@ -38,7 +39,9 @@ a {
 
 form {
 	padding: .875em 1.875em 1.875em;
-	background: #85b5ca;
+	background: white;
+	border-radius: 10px;
+	border: 5px solid tomato;
 }
 
 fieldset,
@@ -46,10 +49,16 @@ legend,
 button {
 	padding: 0;
 	border: none;
+	border-radius: 10px;
 }
 
-fieldset {
+fieldset, legend {
 	margin-top: 1.5em;
+	padding: 15px; 
+}
+fieldset {
+	box-shadow: 1px 1px 3px 2px #ff6347;
+	padding-top: 25px;
 }
 
 legend,
@@ -60,14 +69,25 @@ button {
 legend {
 	font-weight: 500;
 	padding-top: .5em;
-	border-top: 2px solid #679cb3;
-	margin-bottom: 1.125em;
+	color: white;
+	background: tomato;
+	/*margin-bottom: 1.125em;*/
 }
 
 input[type="text"],
 input[type="email"],
 legend {
 	width: 100%;
+	border-radius: 5px;
+}
+input[type="text"],
+input[type="email"] {
+	background-color: #ecfcff;
+}
+input[type="text"]:focus,
+input[type="email"]:focus {
+	background-color: white;
+	border-color: tomato;
 }
 
 label {
@@ -103,8 +123,8 @@ input[type="radio"] {
 
 button {
 	color: #fff;
+	background: tomato;
 	padding: .55em 1.25em;
-	background: #22627e;
 	margin: 1.25em 0 .5em;
 	cursor: pointer;
 }
@@ -179,7 +199,11 @@ button:hover {
 		width: 49%;
 	}
 }
-button:disabled {
-	cursor: default;
-	background-color: lightgrey;
+.error {
+	color: red;
+	font-weight: bolder;
+	background: white;
+}
+.fieldError {
+	border: 4px solid red;
 }

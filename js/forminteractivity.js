@@ -132,16 +132,16 @@ var paymentInfoValid;
 //real time validation
 if ($('#name').val() === "") {
 	//change label and add red color
-	$('#name').prev().text("Name: Please provide your name").css("color", "red");
+	$('#name').prev().text("Please provide your name").attr('class', 'error');
 }
 //and check on keyup
 $('#name').on("change focus keyup click paste", function() {
 	if ( $('#name').val() === "" ) {
-	$('#name').prev().text("Name: Please provide your name").css("color", "red");
+	$('#name').prev().text("Name must not be blank").attr('class', 'error');
 }
 //if not blank change back to standard formatting
 else {
-	$('#name').prev().text("Name").css("color", "black");
+	$('#name').prev().text("Name").removeAttr('class', 'error');
 	//set nameNotBlank to true
 	return nameValid = true;
 }
@@ -158,21 +158,28 @@ var mailVer = function() {
 	var $mail = $('#mail').val();
 
 	if (validateEmail($mail)) {
+		$('#mail').prev().removeAttr('class', 'error');
 		return emailValid = true;
-		console.log(validateEmail($mail));
 	}
 	else {
+		$('#mail').prev().text('Email must contain [text]@[text].[text]').attr("class", "error");
 		return emailValid = false;
 	}
 }
 //3.)make sure at least one checkbox is checked
 var checkboxVer = function() {
+	if ($('.activities p[class="error"]').length = 1) {
+		$('.activities p[class="error"]').remove();
+	}
 	//count the number of checked check boxes
 	var count = $( ".activities input:checked" ).length;
 	if (count > 0) {
+		$('.activities p[class="error"]').remove();
 		return checkValid = true;
 	}
 	else {
+		$('.activities').prepend('<p class="error">*At least one must be checked.</p>');
+		// $('.activities p[class="error"]').remove();
 		return checkValid = false;
 	}
 }
@@ -195,19 +202,34 @@ function onlyNums(testval) {
 	//count the number of checked check boxes
 	var $ccn = $("#cc-num").val();
 	if (getLength($ccn) == 16 && onlyNums($ccn)) {
+		$('#cc-num').prev().removeAttr('class', 'error');
+		$('#cc-num').removeAttr('class', 'fieldError');
 		return ccNumberVerified = true;
 	}
-	else {
+	else if (getLength($ccn) != 16) {
+		$('#cc-num').prev().attr("class", "error");
+		$('#cc-num').attr('class', 'fieldError');
+		alert('Credit Card number is not 16 digits');
+		return ccNumberVerified = false;
+	}
+	else if (!onlyNums($ccn)) {
+		$('#cc-num').prev().attr("class", "error");
+		$('#cc-num').attr('class', 'fieldError');
+		alert('Credit Card field contains characters that are not numbers');
 		return ccNumberVerified = false;
 	}
 }
 var cvvVerification = function() {
-	//count the number of checked check boxes
 	var $cvv = $("#cvv").val();
 	if (getLength($cvv) == 3 && onlyNums($cvv)) {
+		$('#cvv').prev().removeAttr('class', 'error');
+		$('#cvv').removeAttr('class', 'fieldError');
 		return cvvVerified = true;
 	}
 	else {
+		$('#cvv').prev().attr("class", "error");
+		$('#cvv').attr('class', 'fieldError');
+		alert('CVV is not 3 digits and/or does not contain only numbers');
 		return cvvVerified = false;
 	}
 }
@@ -215,9 +237,14 @@ var zipVerification = function() {
 	//count the number of checked check boxes
 	var $zip = $("#zip").val();
 	if (getLength($zip) == 5 && onlyNums($zip)) {
+		$('#zip').prev().removeAttr('class', 'error');
+		$('#zip').removeAttr('class', 'fieldError');
 		return zipVerified = true;
 	}
 	else {
+		$('#zip').prev().attr('class', 'error');
+		$('#zip').attr('class', 'fieldError');
+		alert('CVV is not 5 digits and/or does not contain only numbers');
 		return zipVerified = false;
 	}
 }
@@ -258,7 +285,7 @@ $('form').on('submit', function(event) {
 	paymentInfoVerification(); 
 	// console.log(ccTest($('#cc-num'), 16));
 	if (!nameValid || !emailValid || !checkValid || !paymentInfoValid) {
-		console.log('There are errors');
+		location.href = '#';
 		console.log(nameValid);
 		console.log(emailValid);
 		console.log(checkValid);
