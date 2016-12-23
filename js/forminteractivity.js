@@ -58,32 +58,31 @@ $('.activities input').each(function() {
 $('.activities input').first().val('200');
 $('.activities input').click( function() {
 	var $text = $(this).parent().text();
-	console.log($text);
 	var $length = $text.length;
-	console.log($length);
 	var $dateTime = $text.slice($length-22, $length-6);
-	console.log($dateTime);
 	var $parent = $(this).parent();
 	var isInputChecked = (this.checked);
-	
-	$($parent).siblings().each(function() {
-		var text = $(this).text();
-		var length = text.length;
-		var dateTime = text.slice(length-22, length-6);
-
-		if ($dateTime === dateTime && isInputChecked) {
-			$(this).children().attr('disabled', true);
-		}
-		else {
-			$(this).children().attr('disabled', false);
-			
-		}
+	//create variable for finding labels with conflicting times
+	var $duplicate = $parent.siblings('label:contains('+$dateTime+')');
+	$($duplicate).children().attr('disabled', true);
+	$($duplicate).attr('class', 'disabled');
+	if (!isInputChecked) {
+		$($duplicate).children().attr('disabled', false);
+		$($duplicate).removeAttr('class', 'disabled');
+	}
 	});
+
+	// if ($dateTime === dateTime && isInputChecked) {
+	// 		$(this).children().attr('disabled', true);
+	// 	}
+	// 	else {
+	// 		$(this).children().attr('disabled', false);
+	// 		}
+
 	var $cost = 0;
 	$('.ct').remove();
-});
-	$(".activities input:checked").each(function() {
 
+	$(".activities input:checked").each(function() {
 // 	var $costText = '<h3>Total Cost: '+$cost+"</h3>";
 		$cost += parseInt($(this).val());
 	var $costText = '<h3 class="ct">Total Cost: $ '+$cost+'</h3>';
